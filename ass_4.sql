@@ -124,3 +124,54 @@ where stock<5;
 -- 8. Find orders that are not completed (status is not 'Completed').
 select * from Orders
 where status !='Completed';
+
+-- 9. Find products that are out of stock or belong to the "Electronics" category.
+select * from Products
+where (stock=0 or category='Electronics');
+
+-- 10. List all email addresses that belong to Gmail.
+select email from Customers
+where email like '%gmail.com';
+
+-- 11. Find product names containing the word "Phone".
+select * from Products
+where name like '%Phone%';
+
+-- 12. Find customers whose names have exactly 5 characters.
+select * from Customers
+where name like '_____';
+
+-- 13. Find Products That Have "Laptop" or "Tablet" in Their Name
+select * from Products
+where name like '%Laptop%' or name like '%Tablet%';
+
+-- 14. Retrieve orders placed in the year 2024.
+select * from orders
+where year(order_date) = 2024;
+
+-- 15. Find customers who live in "New York", "Los Angeles", or "Chicago".
+select * from Customers
+where city in ('New York', 'Los Angeles', 'Chicago');
+
+-- 16. List products that do not belong to the 'Electronics' or 'Clothing' categories.
+select * from Products
+where category not in ('Electronics', 'Clothing');
+
+-- 17. Find orders placed by customers with IDs 1, 3, or 5.
+select * from Orders
+where customer_id in (1, 3, 5);
+
+-- 18. Find customers who have not placed any orders.
+select Customers.customer_id, Customers.name, Customers.email, Customers.city, Customers.age from Customers
+left join Orders
+on Customers.customer_id = Orders.customer_id
+where Orders.customer_id is null;
+
+-- 19. Show All Orders Placed in the Last 30 Days
+select * from Orders
+where order_date >= curdate() - interval 30 day;
+
+-- 20. Find Orders Where the Total Amount is an Exact Multiple of 100
+SELECT * 
+FROM Orders 
+WHERE total_amount % 100 = 0;
