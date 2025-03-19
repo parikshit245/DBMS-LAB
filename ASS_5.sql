@@ -127,3 +127,50 @@ LEFT JOIN Loans l ON c.customer_id = l.customer_id
 WHERE l.customer_id IS NULL;
 
 -- 7. Retrieve customers who have accounts in more than one branch.
+SELECT a.customer_id, c.name, COUNT(DISTINCT a.branch_id) AS branch_count
+FROM Accounts a
+JOIN Customers c ON a.customer_id = c.customer_id
+GROUP BY a.customer_id, c.name
+HAVING COUNT(DISTINCT a.branch_id) > 1;
+
+-- 8. Find all accounts that have not had any deposits in the last 3 months.
+SELECT a.account_id, a.customer_id, a.balance, a.account_type
+FROM Accounts a
+WHERE a.account_id NOT IN (
+    SELECT DISTINCT t.account_id
+    FROM Transactions t
+    WHERE t.transaction_type = 'Deposit'
+    AND t.transaction_date >= CURDATE() - INTERVAL 3 MONTH
+);
+
+-- 9. Display the account types where the total balance is below ₹25,000.
+SELECT account_type, SUM(balance) AS total_balance
+FROM Accounts
+GROUP BY account_type
+HAVING SUM(balance) < 25000;
+
+-- 10. Find the total balance per account type where the balance is above ₹50,000.
+SELECT account_type, SUM(balance) AS total_balance
+FROM Accounts
+GROUP BY account_type
+HAVING SUM(balance) > 50000;
+
+-- 11. Retrieve the count of transactions made on dates where more than 5 transactions occurred.
+SELECT transaction_date, COUNT(*) AS transaction_count
+FROM Transactions
+GROUP BY transaction_date
+HAVING COUNT(*) > 5; 
+
+-- 12. Find the top 3 transaction days with the highest total transaction amount.
+SELECT transaction_date, SUM(amount) AS total_amount
+FROM Transactions
+GROUP BY transaction_date
+ORDER BY total_amount DESC
+LIMIT 3;
+
+-- 13. Find customers who have a loan but no account in the bank.
+SELECT c.customer_id, c.name
+FROM Customers c
+LEFT JOIN Accounts a ON c.customer_id = a.customer_id
+WHERE a.customer_id IS NULL
+AND c.customer_id IN (SELECT DISTINCT customer_id FROM Loans);
